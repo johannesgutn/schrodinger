@@ -1,6 +1,5 @@
 import numpy as np
 import os
-import matplotlib.pyplot as plt
 import numba
 from numba import jit,njit, prange
 from scipy.integrate import quad
@@ -38,7 +37,7 @@ t0=0
 tmax=0.5 # Maximum medium length in fm
 
 
-N=30 # Number of grid points. Should be at least 50 for okay results, ideally more
+N=60 # Number of grid points. Should be at least 50 for okay results, ideally more
 Nu1 = N
 Nu2 = N
 Nv1 = N
