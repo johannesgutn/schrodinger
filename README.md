@@ -7,3 +7,4 @@ The grid size N should be at least 50 for okay results. More is better.
 
 The main function creates a numpy file containing the time, full solution 1, full solution 2, Nc solution 1, Nc solution 2 and the analytic result for Nc solution 1.
 When loading the file (using np.load()) you get a numpy array with [0] being the time, [1] beeing the full solution 1, etc.
+See the notebook plots.ipynb for how to load the files and plot them
