@@ -12,15 +12,14 @@ qhatmix=1.5 #GeV^2/fm
 q=qhatmix*25.77 #fm^(-3)
 EGev = 5 # Energy in Gev
 E = EGev * 5.076 # Conversion factor to fm^-1
-z=0.4
-w=E*z*(1-z)
-O=(1-1j)/2*np.sqrt(q/w)
+#z=0.4
+
 Nc=3
 CF=(Nc**2-1)/(2*Nc)
 
-a=np.sqrt(q/w)
-Ou=(1-1j)/2*a
-Ov=(1+1j)/2*a
+#a=lambda z: np.sqrt(q/w)
+#Ou=(1-1j)/2*a
+#Ov=(1+1j)/2*a
 
 # Numerical parameters
 ma=3 # This is the grid size in fm
