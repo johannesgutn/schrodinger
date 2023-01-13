@@ -1,6 +1,6 @@
 This code solves the 4-point function as a Schrodinger equation. You run it by running run.py.
 run.py uses the functions from functions.py and parameter values from configs.py. 
-It requires the packages numpy, numba and scipy
+It requires the packages numpy, pandas, numba and scipy
 
 The values for the physical and numerical parameters are stored in config.py, and can be changed.
 The grid size N should be at least 50 for okay results. More is better.

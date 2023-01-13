@@ -1,0 +1,4 @@
+p,z,L,E,ω,grid_points,grid_size,finite_Nc1,large_Nc1,true_Nc1,finite_Nc2,large_Nc2,largeNc/finiteNc1,largeNc/finiteNc2,error,time
+0.4,0.3,0.5,10,2.1,30,3,failed,failed,failed,failed,failed,failed,failed,failed,0 days 00:00:16.351080000
+0.4,0.3,0.5,10,2.1,40,3,(0.503-0.104j),(0.503-0.104j),(0.492-0.09j),(1.295-0.266j),(1.294-0.268j),1.0,1.01,0.035,0 days 00:01:54.065417
+0.4,0.3,0.5,10,2.1,50,3,(0.503-0.098j),(0.502-0.099j),(0.492-0.09j),(1.302-0.249j),(1.301-0.25j),1.0,1.01,0.026,0 days 00:06:11.811591

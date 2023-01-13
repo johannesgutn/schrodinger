@@ -3,6 +3,9 @@ import os
 import numba
 from numba import jit,njit, prange
 from scipy.integrate import quad
+import pandas as pd
+from timeit import default_timer as timer
+from datetime import timedelta
 
 
 # Do it all in fm
@@ -10,7 +13,7 @@ from scipy.integrate import quad
 
 qhatmix=1.5 #GeV^2/fm
 q=qhatmix*25.77 #fm^(-3)
-EGev = 5 # Energy in Gev
+EGev = 10 # Energy in Gev
 E = EGev * 5.076 # Conversion factor to fm^-1
 #z=0.4
 

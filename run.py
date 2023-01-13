@@ -1,8 +1,8 @@
-from functions import *
+from main import *
 
-# Which values should we use for p [GeV] and theta 
-p_values =[1,2]
-z_values = [0.1,0.3]
+# Which values should we use for p [GeV] and z
+p_values =[0.4]
+z_values = [0.3]
 
 for z in z_values:
     # Computing the potential matrices
