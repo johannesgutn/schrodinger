@@ -13,7 +13,7 @@ from datetime import timedelta
 
 qhatmix=1.5 #GeV^2/fm
 q=qhatmix*25.77 #fm^(-3)
-EGev = 10 # Energy in Gev
+EGev = 100 # Energy in Gev
 E = EGev * 5.076 # Conversion factor to fm^-1
 #z=0.4
 
@@ -36,10 +36,10 @@ v1min=-v1max
 v2min=-v2max
 #tmax=1e-2
 t0=0
-tmax=0.5 # Maximum medium length in fm
+tmax=2 # Maximum medium length in fm
 
 
-N=60 # Number of grid points. Should be at least 50 for okay results, ideally more
+N=50 # Number of grid points. Should be at least 40 for okay results, ideally more
 Nu1 = N
 Nu2 = N
 Nv1 = N
@@ -99,4 +99,4 @@ ddelta = np.zeros(Nu1)
 ddelta[int(Nu1/2)-1] = 1/du1**2
 ddelta[int(Nu1/2)] = -1/du1**2
 
-filename = 'data_files/sch'
+filename = 'data_files/schr'

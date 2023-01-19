@@ -22,6 +22,7 @@ def compute_V(a11,a12,a21,a22,z):
                     a12[i1][i2][j1][j2]=pre*(-(u1t*v1t+u2t*v2t)/Nc)
                     a21[i1][i2][j1][j2]=pre*(Nc*z*(1-z)*((u1t-v1t)**2+(u2t-v2t)**2))
                     a22[i1][i2][j1][j2]=pre*(CF-z*(1-z)*Nc)*((u1t-v1t)**2+(u2t-v2t)**2)
+    return a11,a12,a21,a22
 
 
 
@@ -37,6 +38,7 @@ def compute_VNc(a11,a12,a21,a22,z):
                     a12[i1][i2][j1][j2]=0
                     a21[i1][i2][j1][j2]=pre*(2*z*(1-z)*((u1t-v1t)**2+(u2t-v2t)**2))
                     a22[i1][i2][j1][j2]=pre*(1-2*z*(1-z))*((u1t-v1t)**2+(u2t-v2t)**2)
+    return a11,a12,a21,a22
 
 
 # Make nonhomogenous term in the Sch eq
@@ -82,6 +84,43 @@ def fasit1Ncint(L,p1,p2,z):
     return re + 1j*im
 
 
+def fasit2Ncdiag(t,L,p1,p2,z):
+    pre= -2*1j*w(z)
+    
+    num = 2*w(z)*O(z)/np.tan(O(z)*t)
+    den = 2*w(z)*O(z)/np.tan(O(z)*t)+1j*q*(z**2+(1-z)**2)*(L-t)
+    
+    return pre*(1-num/den*np.exp(-1j*(p1**2+p2**2)/den))
+
+def fasit2Ncdiagint(L,p1,p2,z):
+    def real_fas(t,L,p1,p2,z):
+        return np.real(fasit2Ncdiag(t,L,p1,p2,z))
+    def imag_fas(t,L,p1,p2,z):
+        return np.imag(fasit2Ncdiag(t,L,p1,p2,z))
+    re = quad(real_fas,0,L,args=(L,p1,p2,z))[0]
+    im = quad(imag_fas,0,L,args=(L,p1,p2,z))[0]
+    
+    return re + 1j*im
+
+
+# Resets the values of every array involved in the RK
+def refresh():    
+    k1 = np.zeros([Nu1,Nu2,Nv1,Nv2],dtype = 'complex_')
+    k2 = np.zeros([Nu1,Nu2,Nv1,Nv2],dtype = 'complex_')
+    k3 = np.zeros([Nu1,Nu2,Nv1,Nv2],dtype = 'complex_')
+    
+    l1 = np.zeros([Nu1,Nu2,Nv1,Nv2],dtype = 'complex_')
+    l2 = np.zeros([Nu1,Nu2,Nv1,Nv2],dtype = 'complex_')
+    l3 = np.zeros([Nu1,Nu2,Nv1,Nv2],dtype = 'complex_')
+
+    psi1next = np.zeros([Nu1,Nu2,Nv1,Nv2],dtype = 'complex_')
+    psi2next = np.zeros([Nu1,Nu2,Nv1,Nv2],dtype = 'complex_')
+    
+    psi_nonhom = np.zeros([Nu1,Nu2,Nv1,Nv2],dtype = 'complex_')
+    
+    return k1,k2,k3,l1,l2,l3,psi1next,psi2next,psi_nonhom
+
+
 # The Schrodinger equation itself
 @numba.njit(fastmath = True)
 def diff(F,Fother,V,Vother,k,l,i1,i2,j1,j2,h,nonhom,z):
@@ -97,7 +136,7 @@ def diff(F,Fother,V,Vother,k,l,i1,i2,j1,j2,h,nonhom,z):
 
 # This solves one time step of the Sch eq through Runge-Kutta4
 @numba.njit(fastmath = True, parallel = True)
-def compute_psi_runge(psi1,psi2,psi1next,psi2next,k1,k2,k3,l1,l2,l3,nonhom,t,p1,p2,z):
+def compute_psi_runge(psi1,psi2,psi1next,psi2next,k1,k2,k3,l1,l2,l3,nonhom,t,p1,p2,z,a11,a12,a21,a22):
     h=0
     nonhom = compute_nonhom(nonhom,t+h,p1,p2,z)
     for i1 in prange(1, Nu1-1):
@@ -141,7 +180,7 @@ def compute_psi_runge(psi1,psi2,psi1next,psi2next,k1,k2,k3,l1,l2,l3,nonhom,t,p1,
 
 # This solves one time step of the Sch eq through Runge-Kutta4, for the large-Nc
 # This function is probably redundant
-@numba.njit(fastmath = True, parallel = True)
+'''@numba.njit(fastmath = True, parallel = True)
 def compute_psi_runge_Nc(psi1,psi2,psi1next,psi2next,k1,k2,k3,l1,l2,l3,nonhom,t,p1,p2,z):
     h=0
     nonhom = compute_nonhom(nonhom,t+h,p1,p2,z)
@@ -183,21 +222,4 @@ def compute_psi_runge_Nc(psi1,psi2,psi1next,psi2next,k1,k2,k3,l1,l2,l3,nonhom,t,
                     psi2next[i1,i2,j1,j2] = psi2[i1,i2,j1,j2]+dt/6*(l1[i1,i2,j1,j2]+2*l2[i1,i2,j1,j2]+2*l3[i1,i2,j1,j2]+l4)
     
     return psi1next,psi2next
-
-# Resets the values of every array involved in the RK
-def refresh():    
-    k1 = np.zeros([Nu1,Nu2,Nv1,Nv2],dtype = 'complex_')
-    k2 = np.zeros([Nu1,Nu2,Nv1,Nv2],dtype = 'complex_')
-    k3 = np.zeros([Nu1,Nu2,Nv1,Nv2],dtype = 'complex_')
-    
-    l1 = np.zeros([Nu1,Nu2,Nv1,Nv2],dtype = 'complex_')
-    l2 = np.zeros([Nu1,Nu2,Nv1,Nv2],dtype = 'complex_')
-    l3 = np.zeros([Nu1,Nu2,Nv1,Nv2],dtype = 'complex_')
-
-    psi1next = np.zeros([Nu1,Nu2,Nv1,Nv2],dtype = 'complex_')
-    psi2next = np.zeros([Nu1,Nu2,Nv1,Nv2],dtype = 'complex_')
-    
-    psi_nonhom = np.zeros([Nu1,Nu2,Nv1,Nv2],dtype = 'complex_')
-    
-    return k1,k2,k3,l1,l2,l3,psi1next,psi2next,psi_nonhom
-
+'''
