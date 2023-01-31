@@ -6,8 +6,6 @@ It requires the packages numpy, pandas, numba and scipy
 The values for the physical and numerical parameters are stored in config.py, and can be changed.
 The grid size N should be at least 50 for okay results. More is better.
 
-t,normals_runge1,normals_runge2,normals_runge1Nc,normals_runge2Nc,normals_runge1Ncdiag,normals_runge2Ncdiag,fasit1Nc_array,fasit2Ncdiag_array
-
 The main function creates a numpy file containing the time, full solution 1, full solution 2, Nc solution 1, Nc solution 2, diagonal Nc 2, analytic result for Nc solution 1, analytic result for Nc solution 2.
 When loading the file (using np.load()) you get a numpy array with [0] being the time, [1] beeing the full solution 1, etc.
 See the notebook plots.ipynb for how to load the files and plot them

@@ -13,13 +13,17 @@ We can to keep the real part
 # Could be more efficient, as it solves the Sch eq 3 times, and we repeat the same notation 3 times
 def main(p_GeV,z,a11,a12,a21,a22,a11Nc,a12Nc,a21Nc,a22Nc,a21Ncdiag):
     start = timer()
-    print(f'p={p_GeV:.3}, z={z:.3}')
+    
 
     # Convert p to fm^-1 and transform to cartesian coordinates
     p = p_GeV * 5.076
     phi = 0  # This constitutes a rotation in the transverse plane, which is symmetric. The value should be arbitrary, so we set it to zero.
     p1 = p*np.cos(phi)
     p2 = p*np.sin(phi)
+
+    theta = p/w(z)
+    
+    print(f'theta={theta:.3}, z={z:.3}')
 
     ###################################################################
     # Calculate diagonal Nc first
@@ -64,7 +68,7 @@ def main(p_GeV,z,a11,a12,a21,a22,a11Nc,a12Nc,a21Nc,a22Nc,a21Ncdiag):
 
         print(f'time = {i*dt:.3f}: psi1Nc is {normals_runge1Nc[i]:.3f} (should be {fasit1Ncint(i*dt,p1,p2,z):.3f}), and psi2Nc is {normals_runge2Nc[i]:.3f} (Nc-diag is {fasit2Ncdiagint(i*dt,p1,p2,z):.3f})')
 
-        if np.abs(integrate(psi1Ncdiag))>1000 or np.abs(integrate(psi2Ncdiag))>1000:
+        if np.abs(integrate(psi1Nc))>1000 or np.abs(integrate(psi2Nc))>1000:
             break
 
 
@@ -86,17 +90,19 @@ def main(p_GeV,z,a11,a12,a21,a22,a11Nc,a12Nc,a21Nc,a22Nc,a21Ncdiag):
         
         print(f'time = {i*dt:.3f}: psi1 is {normals_runge1[i]:.3f} (Nc is {fasit1Ncint(i*dt,p1,p2,z):.3f}), and psi2 is {normals_runge2[i]:.3f} (Nc-diag is {fasit2Ncdiagint(i*dt,p1,p2,z):.3f})')
 
-        if np.abs(integrate(psi1Ncdiag))>1000 or np.abs(integrate(psi2Ncdiag))>1000:
+        if np.abs(integrate(psi1))>1000 or np.abs(integrate(psi2))>1000:
             break
 
-   
+    ###################################################################
     fasit1Nc_array = np.zeros([Nt]).astype(complex)
     for i, s in enumerate(t):
-        fasit1Nc_array[i]=fasit1Ncint(s,p1,p2,z)
+        if i > 0:
+            fasit1Nc_array[i]=fasit1Ncint(s,p1,p2,z)
 
     fasit2Ncdiag_array = np.zeros([Nt]).astype(complex)
     for i, s in enumerate(t):
-        fasit2Ncdiag_array[i]=fasit1Ncint(s,p1,p2,z)
+        if i > 0:
+            fasit2Ncdiag_array[i]=fasit2Ncdiagint(s,p1,p2,z)
 
     # Take the time of execution
     end = timer()
@@ -104,7 +110,7 @@ def main(p_GeV,z,a11,a12,a21,a22,a11Nc,a12Nc,a21Nc,a22Nc,a21Ncdiag):
     
     # Save as a numpy file
     combined = np.vstack((t,normals_runge1,normals_runge2,normals_runge1Nc,normals_runge2Nc,normals_runge1Ncdiag,normals_runge2Ncdiag,fasit1Nc_array,fasit2Ncdiag_array))
-    np.save(f'{filename}_p={p_GeV:.3f}_z={z:.3f}_L={tmax}_E={EGev}_gridpoints={N}_gridsize={ma}.npy', combined)
+    np.save(f'{filename}_theta={theta:.3f}_z={z:.3f}_L={tmax}_E={EGev}_gridpoints={N}_gridsize={ma}.npy', combined)
 
     # Update the summary file
     df = pd.read_csv('data_files/sch_summary.csv')

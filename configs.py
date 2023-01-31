@@ -25,7 +25,7 @@ CF=(Nc**2-1)/(2*Nc)
 #Ov=(1+1j)/2*a
 
 # Numerical parameters
-ma=3 # This is the grid size in fm
+ma=2 # This is the grid size in fm
 u1max=ma
 u2max=ma
 v1max=ma

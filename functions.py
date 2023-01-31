@@ -10,6 +10,47 @@ def w(z):
 def O(z):
     return (1-1j)/2*np.sqrt(q/w(z))
 
+# The expected value of the large-Nc
+def fasit1Nc(t,L,p1,p2,z):
+    pre= -2*1j*w(z)/np.cosh(O(z)*t)**2
+    
+    expo1 = 1j*np.tanh(O(z)*t)/(2*w(z)*O(z))*(p1**2+p2**2)
+    expo2 = -1j*np.tan(O(z)*t)/(2*w(z)*O(z))*(p1**2+p2**2)
+    expo3 = -1j*np.tan(O(z)*L)/(2*w(z)*O(z))*(p1**2+p2**2)
+    
+    return pre*np.exp(expo1)*(np.exp(expo2)-np.exp(expo3))
+
+# The expected value of the large-Nc, integrated over time
+def fasit1Ncint(L,p1,p2,z):
+    def real_fas(t,L,p1,p2,z):
+        return np.real(fasit1Nc(t,L,p1,p2,z))
+    def imag_fas(t,L,p1,p2,z):
+        return np.imag(fasit1Nc(t,L,p1,p2,z))
+    re = quad(real_fas,0,L,args=(L,p1,p2,z))[0]
+    im = quad(imag_fas,0,L,args=(L,p1,p2,z))[0]
+    
+    return re + 1j*im
+
+
+def fasit2Ncdiag(t,L,p1,p2,z):
+    pre= -2*1j*w(z)
+    
+    num = 2*w(z)*O(z)/np.tan(O(z)*t)
+    den = 2*w(z)*O(z)/np.tan(O(z)*t)+1j*q*(z**2+(1-z)**2)*(L-t)
+    
+    return pre*(1-num/den*np.exp(-1j*(p1**2+p2**2)/den))
+
+def fasit2Ncdiagint(L,p1,p2,z):
+    def real_fas(t,L,p1,p2,z):
+        return np.real(fasit2Ncdiag(t,L,p1,p2,z))
+    def imag_fas(t,L,p1,p2,z):
+        return np.imag(fasit2Ncdiag(t,L,p1,p2,z))
+    re = quad(real_fas,0,L,args=(L,p1,p2,z))[0]
+    im = quad(imag_fas,0,L,args=(L,p1,p2,z))[0]
+    
+    return re + 1j*im
+
+
 # Calculate the potential matrix
 @numba.njit()
 def compute_V(a11,a12,a21,a22,z):
@@ -61,46 +102,6 @@ def compute_nonhom(psi0,t,p1,p2,z):
 # Simple integrater, that can be changed to a more fancy one
 def integrate(arr):
     return arr.sum()*du1*du2*dv1*dv2
-
-# The expected value of the large-Nc
-def fasit1Nc(t,L,p1,p2,z):
-    pre= -2*1j*w(z)/np.cosh(O(z)*t)**2
-    
-    expo1 = 1j*np.tanh(O(z)*t)/(2*w(z)*O(z))*(p1**2+p2**2)
-    expo2 = -1j*np.tan(O(z)*t)/(2*w(z)*O(z))*(p1**2+p2**2)
-    expo3 = -1j*np.tan(O(z)*L)/(2*w(z)*O(z))*(p1**2+p2**2)
-    
-    return pre*np.exp(expo1)*(np.exp(expo2)-np.exp(expo3))
-
-# The expected value of the large-Nc, integrated over time
-def fasit1Ncint(L,p1,p2,z):
-    def real_fas(t,L,p1,p2,z):
-        return np.real(fasit1Nc(t,L,p1,p2,z))
-    def imag_fas(t,L,p1,p2,z):
-        return np.imag(fasit1Nc(t,L,p1,p2,z))
-    re = quad(real_fas,0,L,args=(L,p1,p2,z))[0]
-    im = quad(imag_fas,0,L,args=(L,p1,p2,z))[0]
-    
-    return re + 1j*im
-
-
-def fasit2Ncdiag(t,L,p1,p2,z):
-    pre= -2*1j*w(z)
-    
-    num = 2*w(z)*O(z)/np.tan(O(z)*t)
-    den = 2*w(z)*O(z)/np.tan(O(z)*t)+1j*q*(z**2+(1-z)**2)*(L-t)
-    
-    return pre*(1-num/den*np.exp(-1j*(p1**2+p2**2)/den))
-
-def fasit2Ncdiagint(L,p1,p2,z):
-    def real_fas(t,L,p1,p2,z):
-        return np.real(fasit2Ncdiag(t,L,p1,p2,z))
-    def imag_fas(t,L,p1,p2,z):
-        return np.imag(fasit2Ncdiag(t,L,p1,p2,z))
-    re = quad(real_fas,0,L,args=(L,p1,p2,z))[0]
-    im = quad(imag_fas,0,L,args=(L,p1,p2,z))[0]
-    
-    return re + 1j*im
 
 
 # Resets the values of every array involved in the RK
