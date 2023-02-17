@@ -2,7 +2,7 @@ import numpy as np
 import os
 import numba
 from numba import jit,njit, prange
-from scipy.integrate import quad
+from scipy.integrate import quad,dblquad
 import pandas as pd
 from timeit import default_timer as timer
 from datetime import timedelta
@@ -25,11 +25,11 @@ CF=(Nc**2-1)/(2*Nc)
 #Ov=(1+1j)/2*a
 
 # Numerical parameters
-ma=2 # This is the grid size in fm
-u1max=ma
-u2max=ma
-v1max=ma
-v2max=ma
+grid_size=2 # This is the grid size in fm
+u1max=grid_size
+u2max=grid_size
+v1max=grid_size
+v2max=grid_size
 u1min=-u1max
 u2min=-u2max
 v1min=-v1max

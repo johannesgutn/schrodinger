@@ -1,7 +1,10 @@
 from configs import *
 
-#w = lambda z: E*z*(1-z)
-#O = lambda z: (1-1j)/2*np.sqrt(q/w(z))
+
+from math import log10,floor
+def round_to_1(x):
+    return round(x, -int(floor(log10(abs(x)))))
+
 @numba.njit
 def w(z):
     return E*z*(1-z)
@@ -48,6 +51,40 @@ def fasit2Ncdiagint(L,p1,p2,z):
     re = quad(real_fas,0,L,args=(L,p1,p2,z))[0]
     im = quad(imag_fas,0,L,args=(L,p1,p2,z))[0]
     
+    return re + 1j*im
+
+# The eikonal answer
+def eik1(t2,t1,L,z,th):
+    pre = th**2*w(z)**2
+    exp1 = -1j*th**2*w(z)*(t2-t1)/2
+    exp2 = -q*th**2*((L-t2)**3+(L-t1)**3)/12
+    return pre*np.exp(exp1)*np.exp(exp2)
+
+def eik1int(L,z,th):
+    def real_fas(t2,t1,L,z,th):
+        return np.real(eik2(t2,t1,L,z,th))
+    def imag_fas(t2,t1,L,z,th):
+        return np.imag(eik2(t2,t1,L,z,th))
+    re = dblquad(real_fas,0,L,lambda t2: 0,lambda t2: t2,args=(L,z,th))[0]
+    im = dblquad(imag_fas,0,L,lambda t2: 0,lambda t2: t2,args=(L,z,th))[0]
+
+    return re + 1j*im
+
+def eik2(t,L,z,th):
+    pre = 4*w(z)**2/(q*(1-2*z*1*(1-z))*t**2)
+    exp1 = -1j*th**2*w(z)*t/2
+    exp2=-q*th**2*t**3/12
+    exp3=-q*th**2*(1-2*z*1*(1-z))*(L-t)*t**2/4
+    return pre*np.exp(exp1)*np.exp(exp2)*(1-np.exp(exp3))
+
+def eik2int(L,z,th):
+    def real_fas(t,L,z,th):
+        return np.real(eik2(t,L,z,th))
+    def imag_fas(t,L,z,th):
+        return np.imag(eik2(t,L,z,th))
+    re = quad(real_fas,0,L,args=(L,z,th))[0]
+    im = quad(imag_fas,0,L,args=(L,z,th))[0]
+
     return re + 1j*im
 
 

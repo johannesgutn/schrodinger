@@ -110,7 +110,7 @@ def main(p_GeV,z,a11,a12,a21,a22,a11Nc,a12Nc,a21Nc,a22Nc,a21Ncdiag):
     
     # Save as a numpy file
     combined = np.vstack((t,normals_runge1,normals_runge2,normals_runge1Nc,normals_runge2Nc,normals_runge1Ncdiag,normals_runge2Ncdiag,fasit1Nc_array,fasit2Ncdiag_array))
-    np.save(f'{filename}_theta={theta:.3f}_z={z:.3f}_L={tmax}_E={EGev}_gridpoints={N}_gridsize={ma}.npy', combined)
+    np.save(f'{filename}_theta={theta:.3f}_z={z:.3f}_L={tmax}_E={EGev}_gridpoints={N}_gridsize={grid_size}.npy', combined)
 
     # Update the summary file
     df = pd.read_csv('data_files/sch_summary.csv')
@@ -126,9 +126,9 @@ def main(p_GeV,z,a11,a12,a21,a22,a11Nc,a12Nc,a21Nc,a22Nc,a21Ncdiag):
         finite_Nc1,large_Nc1,true_Nc1 = np.round(normals_runge1[Nt-1],3),np.round(normals_runge1Nc[Nt-1],3),np.round(fasit1Nc_array[Nt-1],3)
         finite_Nc2,large_Nc2,diag_Nc2, true_diag2 = np.round(normals_runge2[Nt-1],3),np.round(normals_runge2Nc[Nt-1],3),np.round(normals_runge2Nc[Nt-1],3),np.round(fasit2Ncdiag_array[Nt-1],3)
 
-        df.loc[len(df)] = [round(np.real(p_GeV),3),round(p_GeV/(w(z)/5.076),3),round(np.real(z),3),np.real(tmax),np.real(EGev),np.round(w(z)/5.076,2),np.real(N),np.real(ma),finite_Nc1,large_Nc1,true_Nc1,finite_Nc2,large_Nc2,diag_Nc2,true_diag2,frac_Nc_finite1,frac_Nc_finite2,frac_diag_finite2,error1,error2,total_time]
+        df.loc[len(df)] = [round(np.real(p_GeV),3),round(p_GeV/(w(z)/5.076),3),round(np.real(z),3),np.real(tmax),np.real(EGev),np.round(w(z)/5.076,2),np.real(N),np.real(grid_size),finite_Nc1,large_Nc1,true_Nc1,finite_Nc2,large_Nc2,diag_Nc2,true_diag2,frac_Nc_finite1,frac_Nc_finite2,frac_diag_finite2,error1,error2,total_time]
     else:
-        df.loc[len(df)] = [round(np.real(p_GeV),3),round(p_GeV/(w(z)/5.076),3),round(np.real(z),3),tmax,EGev,np.round(w(z)/5.076,2),N,ma,'failed','failed','failed','failed','failed','failed','failed','failed','failed','failed','failed','failed',total_time]
+        df.loc[len(df)] = [round(np.real(p_GeV),3),round(p_GeV/(w(z)/5.076),3),round(np.real(z),3),tmax,EGev,np.round(w(z)/5.076,2),N,grid_size,'failed','failed','failed','failed','failed','failed','failed','failed','failed','failed','failed','failed',total_time]
 
     
     df = df.sort_values(['ω','z','p'], ascending=[True,True,True])
@@ -136,6 +136,6 @@ def main(p_GeV,z,a11,a12,a21,a22,a11Nc,a12Nc,a21Nc,a22Nc,a21Ncdiag):
 
 
     df = pd.read_csv('data_files/fails.csv')
-    df.loc[len(df)] = [np.round(w(z)/5.076,2),round(np.real(z),3),np.real(EGev),round(np.real(p_GeV),3),np.real(N),np.real(ma),np.real(tmax),round(t_stop,3),t_stop==tmax]
+    df.loc[len(df)] = [np.round(w(z)/5.076,2),round(np.real(z),3),np.real(EGev),round(np.real(p_GeV),3),np.real(N),np.real(grid_size),np.real(tmax),round(t_stop,3),t_stop==tmax]
     df = df.sort_values('t_failed', ascending=False)
     df.to_csv('data_files/fails.csv', index=False)
