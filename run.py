@@ -19,6 +19,9 @@ dth = log_oneover_th[0]-log_oneover_th[1]
 log_oneover_th = np.array([log_oneover_th[points-1]-dth])
 theta_values = np.exp(-log_oneover_th)
 
+z_values=np.array([0.5])
+theta_values=np.array([0.5])
+
 for z in z_values:
     # Computing the potential matrices
     a11,a12,a21,a22 = compute_V(a11,a12,a21,a22,z)
